@@ -293,7 +293,7 @@ module.controller('EditChecksheetController',['$scope','$http','$templateCache',
                 $scope.$apply(function(){
                    if (typeof comment.images == 'undefined') comment.images = [];
                     comment.images.push({'path':path});
-
+                    console.log("takePhotos ",path);
                    if(!$scope.isInsert && typeof comment.id != 'undefined'){
                         var defectPhoto = new DefectPhotos({
                             created: new Date(),
@@ -301,10 +301,13 @@ module.controller('EditChecksheetController',['$scope','$http','$templateCache',
                             status:0
                         });
                         comment.photos.add(defectPhoto);
+                        console.log("add defectPhoto!");
                         persistence.flush(function(){
+                            console.log("add defectPhoto success!");
                              //remove to cordova.file.dataDirectory
                             window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fileSystem){
                                 fileSystem.root.getFile(path,null,function(photoEntry){
+                                    console.log(photoEntry.localURL);
                                     photoEntry.copyTo(cordova.file.dataDirectory,defectPhoto.id+'.jpg',
                                         successCallback, 
                                         errorCallback);
