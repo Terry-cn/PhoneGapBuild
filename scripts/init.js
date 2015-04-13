@@ -320,6 +320,7 @@ module.controller('EditChecksheetController',['$scope','$http','$templateCache',
                                 });
                                 
                                 function successCallback(entry){
+                                    console.log("copy photo success",entry.localURL);
                                     ons.notification.alert({
                                         message:cordova.file.dataDirectory
                                     });
@@ -329,7 +330,7 @@ module.controller('EditChecksheetController',['$scope','$http','$templateCache',
                                     console.log(entry);
                                 };
                                 function errorCallback(fileError){
-                                    console.log(fileError);
+                                    console.log("copy photo error",fileError);
                                 };
                             });
                         });
