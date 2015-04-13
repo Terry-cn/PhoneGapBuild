@@ -303,15 +303,29 @@ module.controller('EditChecksheetController',['$scope','$http','$templateCache',
                         comment.photos.add(defectPhoto);
                         persistence.flush(function(){
                              //remove to cordova.file.dataDirectory
-
-                            var photoEntry = new Entry();
-                            photoEntry.copyTo(remove to cordova.file.dataDirectory,defectPhoto.id+'.jpg',successCallback, errorCallback);
-                            function successCallback(entry){
-                                console.log(entry);
-                            };
-                            function errorCallback(fileError){
-                                console.log(fileError);
-                            };
+                            window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fileSystem){
+                                fileSystem.root.getFile(path,null,function(photoEntry){
+                                    photoEntry.copyTo(cordova.file.dataDirectory,defectPhoto.id+'.jpg',
+                                        successCallback, 
+                                        errorCallback);
+                                     
+                                },function(evt){
+                                    console.log(evt.target.error.code);
+                                });
+                                
+                                function successCallback(entry){
+                                    ons.notification.alert({
+                                        message:cordova.file.dataDirectory
+                                    });
+                                     ons.notification.alert({
+                                        message:entry.localURL 
+                                    });
+                                    console.log(entry);
+                                };
+                                function errorCallback(fileError){
+                                    console.log(fileError);
+                                };
+                            });
                         });
                     }
                     
