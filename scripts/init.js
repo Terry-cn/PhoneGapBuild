@@ -2,6 +2,7 @@
 var module = ons.bootstrap('Nova', ['onsen']);
 var DB = new Nova.services.db();
 var dbSync = new Nova.services.db.DBSync(Nova.config);
+var photoSync = new Nova.services.PhotosSync(Nova.config);
 //persistence.typeMapper.idType ="INT";
 var getServerURL = function(url){
     return Nova.config.remoteAddress + (url.indexOf('/') == 0? url : '/'+url);
@@ -55,6 +56,7 @@ module.controller('LoginController',['$scope','$http','$templateCache','$rootSco
                 ajaxOption.headers.Authorization = data.token_type + ' '+data.access_token;
                 localStorage.setItem('Authorization',ajaxOption.headers.Authorization);
                 dbSync.startSync($http,ajaxOption,$rootScope);
+                photoSync.startSync();
                 // ons.notification.alert({
                 //     message:data.access_token
                 // });
@@ -97,6 +99,7 @@ module.controller('ChecksheetListController',['$scope','$http','$templateCache',
 
         $scope.syncOff = function(){
             dbSync.stopSync();
+            photoSync.stopSync();
         }
 }]);
 
@@ -353,10 +356,19 @@ module.controller('EditChecksheetController',['$scope','$http','$templateCache',
                     saveToPhotoAlbum : true
                 });
             }catch(exp){
-                console.log(exp);
+                console.log(exp,comment);
                 if (typeof comment.images == 'undefined') 
                     comment.images = [];
                 comment.images.push({'path':'images/log.png'});
+
+                var defectPhoto = new DefectPhotos({
+                    created: new Date(),
+                    path:'images/log.png',
+                    status:0
+                });
+                comment.photos.add(defectPhoto);
+                console.log("add defectPhoto!");
+                persistence.flush();
             }
            
         }

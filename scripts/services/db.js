@@ -20,6 +20,18 @@ Nova.services.db.prototype.getTableLastUpdateTime = function(tableName,callback)
 	});
 };
 
+Nova.services.db.prototype.getSyncPhotos = function(callback){
+    persistence.sync.Sync.all().filter("entity","=",DefectPhotos.meta.name).one(function(syncResult){
+        var photos = DefectPhotos.all()
+        .filter('status','=',0)
+        .and(new persistence.PropertyFilter('_lastChange', '<', syncResult.localDate))
+        .limit(5);
+        photos.list(null,function(result){
+            callback(false,result);
+        });
+    });
+};
+
 Nova.services.db.prototype.setTableLastUpdateTime = function(tx,tableName,lastUpdatetime,callback){
 	this.getTableLastUpdateTime(tableName,function(err,result){
 		if(!result){
@@ -69,7 +81,7 @@ Nova.services.db.prototype.getSites = function(town,callback){
             }
         });
         callback(false,sites);
-    })
+    });
 };
 Nova.services.db.prototype.getAddress = function(site,callback){
     var dbLocation = Locations.all().filter('site','=',site).order('address',true);
