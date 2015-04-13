@@ -26,7 +26,7 @@
     <feature name="http://api.phonegap.com/1.0/battery" />
     
     <feature name="debug-server" required="true">
-       <param name="domain" value="http://10.10.120.69:8080"/>
+       <param name="domain" value="http://192.168.191.1:8080"/>
        <param name="key" value="anonymous"/>
     </feature>
            
